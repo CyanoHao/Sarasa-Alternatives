@@ -1,37 +1,14 @@
-# Sarasa Gothic (更纱黑体 / 更紗黑體 / 更紗ゴシック)
+# Sarasa Gothic Slab
 
-This is SARASA GOTHIC, a Chinese & Japanese programming font based on Iosevka and Source Han Sans.
+Mono-slab variants for [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
 
 ## To build
 
-You need [Node.js](https://nodejs.org/en/) 8.5 (or newer), [otfcc](https://github.com/caryll/otfcc), [AFDKO](http://www.adobe.com/devnet/opentype/afdko.html) and [ttfautohint](https://www.freetype.org/ttfautohint) installed, then run:
-
-```bash
-npm install
-```
-
-after the NPM packages are installed, run
-
-```bash
-node build ttf
-```
-
-to build the TTF files, it would be in `build/out` directory.
-
-To build TTC, type
-
-```bash
-node build ttc
-```
-
-instead, the files would be in `build/ttc` directory.
+Same as [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
 
 ## What are the names?
 
-- LGC set being Nono Sans
-  - Quotes (`“”`) are full width —— Gothic
-  - Quotes (`“”`) are narrow —— UI
-- LGC set being Iosevka
-  - Have ligature, Em dashes (`——`) are full width —— MonoT
-  - Have ligature, Em dashes (`——`) are half width —— Mono
-  - No ligature, Em dashes (`——`) are half width —— Term
+- LGC set being Iosevka Slab
+  - Have ligature, Em dashes (`——`) are full width —— Type Slab
+  - Have ligature, Em dashes (`——`) are half width —— Mono Slab
+  - No ligature, Em dashes (`——`) are half width —— Term Slab
