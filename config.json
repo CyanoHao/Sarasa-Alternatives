@@ -11,6 +11,7 @@
 				"en_US": "Sarasa Mono Slab",
 				"zh_CN": "等距更纱黑体 Slab",
 				"zh_TW": "等距更紗黑體 Slab",
+				"zh_HK": "等距更紗黑體 Slab",
 				"ja_JP": "更紗等幅ゴシック Slab"
 			}
 		},
@@ -22,6 +23,7 @@
 				"en_US": "Sarasa Mono Type Slab",
 				"zh_CN": "等距更纱黑体 Type Slab",
 				"zh_TW": "等距更紗黑體 Type Slab",
+				"zh_HK": "等距更紗黑體 Type Slab",
 				"ja_JP": "更紗等幅ゴシック Type Slab"
 			}
 		},
@@ -33,6 +35,7 @@
 				"en_US": "Sarasa Term Slab",
 				"zh_CN": "Sarasa Term Slab",
 				"zh_TW": "Sarasa Term Slab",
+				"zh_HK": "Sarasa Term Slab",
 				"ja_JP": "Sarasa Term Slab"
 			}
 		}
@@ -52,11 +55,22 @@
 		}
 	},
 
-	"subfamilyOrder": ["cl", "sc", "tc", "j"],
+	"subfamilyOrder": ["cl", "sc", "tc", "hc", "j"],
 	"subfamilies": {
 		"cl": { "name": "CL" },
 		"sc": { "name": "SC" },
 		"tc": { "name": "TC" },
+		"hc": { "name": "HC" },
 		"j": { "name": "J" }
-	}
+	},
+
+	"os2encodings": {
+		"J": { "gbk": false, "big5": false, "jis": true, "korean": false },
+		"SC": { "gbk": true, "big5": false, "jis": false, "korean": false },
+		"TC": { "gbk": false, "big5": true, "jis": false, "korean": false },
+		"HC": { "gbk": false, "big5": true, "jis": false, "korean": false },
+		"CL": { "gbk": false, "big5": true, "jis": false, "korean": false }
+	},
+
+	"copyright": "Copyright 2015-2018, Belleve Invis (belleve@typeof.net). Portions Copyright © 2014, 2015 Adobe Systems Incorporated (http://www.adobe.com/), with Reserved Font Name 'Source'. Portions Copyright 2012 Google Inc."
 }
