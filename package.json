@@ -1,5 +1,5 @@
 {
-	"name": "sarasa-gothic",
+	"name": "sarasa-fullwidth",
 	"version": "0.8.0",
 	"main": "./run",
 	"dependencies": {

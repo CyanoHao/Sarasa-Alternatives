@@ -2,64 +2,30 @@
 	"prefix": "sarasa",
 	"CVT_PADDING": 300,
 
-	"familyOrder": ["gothic", "ui", "mono", "monoT", "term"],
+	"familyOrder": ["fullwidth", "fullwidthslab"],
 	"families": {
-		"gothic": {
-			"isMono": false,
-			"latinGroup": "noto-sans",
-			"naming": {
-				"en_US": "Sarasa Gothic",
-				"zh_CN": "更纱黑体",
-				"zh_TW": "更紗黑體",
-				"zh_HK": "更紗黑體",
-				"ja_JP": "更紗ゴシック"
-			}
-		},
-		"ui": {
-			"isPWID": true,
-			"isMono": false,
-			"latinGroup": "noto-sans",
-			"naming": {
-				"en_US": "Sarasa UI",
-				"zh_CN": "更纱黑体 UI",
-				"zh_TW": "更紗黑體 UI",
-				"zh_HK": "更紗黑體 UI",
-				"ja_JP": "更紗ゴシック UI"
-			}
-		},
-		"mono": {
-			"isMono": true,
-			"latinGroup": "iosevka",
-			"naming": {
-				"en_US": "Sarasa Mono",
-				"zh_CN": "等距更纱黑体",
-				"zh_TW": "等距更紗黑體",
-				"zh_HK": "等距更紗黑體",
-				"ja_JP": "更紗等幅ゴシック"
-			}
-		},
-		"monoT": {
+		"fullwidth": {
 			"isMono": true,
 			"isType": true,
-			"latinGroup": "iosevka",
+			"latinGroup": "iosevka-cc",
 			"naming": {
-				"en_US": "Sarasa Mono T",
-				"zh_CN": "等距更纱黑体 T",
-				"zh_TW": "等距更紗黑體 T",
-				"zh_HK": "等距更紗黑體 T",
-				"ja_JP": "更紗等幅ゴシック T"
+				"en_US": "Sarasa Mono Fullwidth",
+				"zh_CN": "全角等宽更纱黑体",
+				"zh_TW": "全形等寬更紗黑體",
+				"zh_HK": "全形等寬更紗黑體",
+				"ja_JP": "更紗全角等幅ゴシック"
 			}
 		},
-		"term": {
+		"fullwidthslab": {
 			"isMono": true,
-			"latinGroup": "iosevka-term",
-			"isTerm": true,
+			"isType": true,
+			"latinGroup": "iosevka-cc-slab",
 			"naming": {
-				"en_US": "Sarasa Term",
-				"zh_CN": "Sarasa Term",
-				"zh_TW": "Sarasa Term",
-				"zh_HK": "Sarasa Term",
-				"ja_JP": "Sarasa Term"
+				"en_US": "Sarasa Mono Fullwidth Slab",
+				"zh_CN": "全角等宽更纱黑体 Slab",
+				"zh_TW": "全形等寬更紗黑體 Slab",
+				"zh_HK": "全形等寬更紗黑體 Slab",
+				"ja_JP": "更紗全角等幅ゴシック Slab"
 			}
 		}
 	},

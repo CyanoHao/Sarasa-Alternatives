@@ -80,17 +80,13 @@ sanitizers.halfComp2 = HalfCompN(2);
 sanitizers.halfComp3 = HalfCompN(3);
 
 const sanitizerTypes = {
-	"“": "halfRight",
-	"‘": "halfRight",
-	"’": "halfLeft",
-	"”": "halfLeft",
-	"—": "halfComp",
-	"\u2010": "halfComp",
-	"\u2011": "halfComp",
-	"\u2012": "halfComp",
-	"\u2013": "halfCompH",
-	"\u2e3a": "halfComp2",
-	"\u2e3b": "halfComp3"
+	"\u2010": "halfComp",  // HYPHEN
+	"\u2011": "halfComp",  // NON-BREAKING HYPHEN
+	"\u2012": "halfComp",  // FIGURE DASH
+	"\u2013": "halfComp", // EN DASH
+	"—": "halfComp",      // EM DASH
+	"\u2e3a": "halfComp2", // TWO-EM DASH
+	"\u2e3b": "halfComp3", // THREE-EM DASH
 };
 
 exports.sanitizeSymbols = async function sanitizeSymbols(isType) {
