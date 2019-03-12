@@ -1,7 +1,4 @@
 {
-	"prefix": "sarasa",
-	"CVT_PADDING": 300,
-
 	"familyOrder": ["monoslab", "typeslab", "termslab"],
 	"families": {
 		"monoslab": {

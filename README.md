@@ -16,7 +16,11 @@ Note: These cache files were built on Windows. If you are to build on Linux or m
 
 ## What are the names?
 
-- LGC set being Iosevka Slab
-  - Have ligature, Em dashes (`——`) are full width —— Type Slab
-  - Have ligature, Em dashes (`——`) are half width —— Mono Slab
-  - No ligature, Em dashes (`——`) are half width —— Term Slab
+- Style dimension
+  - Latin/Greek/Cyrillic character set being Iosevka Slab
+    - Have ligature, Em dashes (`——`) are full width —— Mono Type Slab
+    - Have ligature, Em dashes (`——`) are half width —— Mono Slab
+    - No ligature, Em dashes (`——`) are half width —— Term Slab
+- Orthography dimension
+  - `CL`: Classical orthography
+  - `SC`, `TC`, `J`, `HC`: Regional orthography, following [Source Han Sans](https://github.com/adobe-fonts/source-han-sans) notations.
