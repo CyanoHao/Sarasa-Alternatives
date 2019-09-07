@@ -85,7 +85,6 @@
 		"hc": { "name": "HC" },
 		"j": { "name": "J" }
 	},
-
 	"os2encodings": {
 		"J": { "gbk": false, "big5": false, "jis": true, "korean": false },
 		"SC": { "gbk": true, "big5": false, "jis": false, "korean": false },
@@ -93,7 +92,13 @@
 		"HC": { "gbk": false, "big5": true, "jis": false, "korean": false },
 		"CL": { "gbk": false, "big5": true, "jis": false, "korean": false }
 	},
-
+	"nameTupleSelector": {
+		"J": ["en_US", "ja_JP"],
+		"SC": ["en_US", "zh_CN"],
+		"TC": ["en_US", "zh_TW"],
+		"HC": ["en_US", "zh_HK"],
+		"CL": ["en_US", "zh_TW"]
+	},
 	"copyright": "Copyright 2015-2019, Belleve Invis (belleve@typeof.net). Portions Copyright © 2014, 2015 Adobe Systems Incorporated (http://www.adobe.com/), with Reserved Font Name 'Source'. Portions Copyright 2012 Google Inc.",
 
 	"shsSourceMap": {
