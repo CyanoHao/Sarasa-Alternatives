@@ -1,4 +1,4 @@
-# Sarasa Gothic Slab
+# Sarasa Slab
 
 Mono-slab variants for [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
 
@@ -8,9 +8,9 @@ Same as [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
 
 ### Boost building process
 
-Since v0.7.0, ideohint cache files are available. With existing cache files, building time will be reduced by up to 80%.
+Chlorophytum (ideograph hinter) cache files are available.
 
-To make use of cache file, download `ideohint-cache.7z`, then extract it and move `hgc` files to `Sarasa-Alternatives/build/`.
+To make use of cache files, download `chlorophytum-cache.tar`, then extract it and move `hf-*/` folders to `Sarasa-Alternatives/build/`.
 
 ## What are the names?
 
