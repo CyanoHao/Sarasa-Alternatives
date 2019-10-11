@@ -10,7 +10,7 @@ Same as [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
 
 Chlorophytum (ideograph hinter) cache files are available.
 
-To make use of cache files, download `chlorophytum-cache.tar`, then extract it and move `hf-*/` folders to `Sarasa-Alternatives/build/`.
+To make use of cache files, download `chlorophytum-cache-<chlo_version>.tar`, then extract it and move `hf-*/` folders to `Sarasa-Alternatives/build/`.
 
 ## What are the names?
 
