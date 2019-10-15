@@ -21,4 +21,4 @@ To make use of cache files, download `chlorophytum-cache-<chlo_version>.tar`, th
     - No ligature, Em dashes (`——`) are half width —— Term Slab
 - Orthography dimension
   - `CL`: Classical orthography
-  - `SC`, `TC`, `J`, `HC`: Regional orthography, following [Source Han Sans](https://github.com/adobe-fonts/source-han-sans) notations.
+  - `SC`, `TC`, `J`, `K`, `HC`: Regional orthography, following [Source Han Sans](https://github.com/adobe-fonts/source-han-sans) notations.
