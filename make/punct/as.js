@@ -1,6 +1,6 @@
 "use strict";
 
-const { quadify, introduce, build, gc, manip } = require("megaminx");
+const { introduce, build, gc, manip } = require("megaminx");
 const {
 	isIdeograph,
 	isWestern,
@@ -8,7 +8,13 @@ const {
 	isKorean,
 	filterUnicodeRange
 } = require("../common/unicode-kind");
-const { sanitizeSymbols, removeUnusedFeatures, toPWID } = require("./common");
+const {
+	sanitizeSymbols,
+	removeUnusedFeatures,
+	toPWID,
+	removeDashCcmp,
+	buildNexusDash
+} = require("./common");
 
 module.exports = async function makeFont(ctx, config, argv) {
 	const a = await ctx.run(introduce, "a", {
@@ -16,7 +22,6 @@ module.exports = async function makeFont(ctx, config, argv) {
 		prefix: "a",
 		ignoreHints: true
 	});
-	await ctx.run(quadify, "a");
 	a.cmap_uvs = null;
 	filterUnicodeRange(
 		a,
@@ -32,6 +37,8 @@ module.exports = async function makeFont(ctx, config, argv) {
 	}
 	if (argv.mono) {
 		await ctx.run(manip.glyph, "a", sanitizeSymbols, argv.type);
+		removeDashCcmp(ctx.items.a, argv.mono);
+		await ctx.run(manip.glyph, "a", buildNexusDash);
 	}
 	removeUnusedFeatures(ctx.items.a, argv.mono);
 	await ctx.run(gc, "a", { ignoreAltSub: true });

@@ -1,7 +1,7 @@
 "use strict";
 
 const { introduce, build, gc } = require("megaminx");
-const { isIdeograph, filterUnicodeRange } = require("../common/unicode-kind");
+const { isIdeograph, isKorean, filterUnicodeRange } = require("../common/unicode-kind");
 
 async function pass(ctx, config, argv) {
 	const a = await ctx.run(introduce, "a", {
@@ -9,7 +9,7 @@ async function pass(ctx, config, argv) {
 		prefix: "a",
 		ignoreHints: true
 	});
-	filterUnicodeRange(a, isIdeograph);
+	filterUnicodeRange(a, c => !isIdeograph(c) && !isKorean(c));
 	a.cvt_ = [];
 	a.fpgm = [];
 	a.prep = [];

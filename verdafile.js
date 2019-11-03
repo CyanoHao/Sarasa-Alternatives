@@ -25,6 +25,11 @@ const NODEJS = `node`;
 const SEVEN_ZIP = `7z`;
 const OTFCCDUMP = `otfccdump`;
 const OTFCCBUILD = `otfccbuild`;
+const OTF2TTF = `otf2ttf`;
+
+const NPX_SUFFIX = os.platform() === "win32" ? ".cmd" : "";
+const TTCIZE = "node_modules/.bin/otfcc-ttcize" + NPX_SUFFIX;
+const Chlorophytum = [NODEJS, `./node_modules/@chlorophytum/cli/bin/_startup`];
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Entrypoint
@@ -55,11 +60,8 @@ const TTCArchive = file.make(
 	version => `${OUT}/sarasa-slab-ttc-${version}.7z`,
 	async (t, target) => {
 		await t.need(TtcFontFiles);
-		await cd(`${OUT}/ttc`).run(
-			[SEVEN_ZIP, `a`],
-			[`-t7z`, `-mmt=on`, `-m0=LZMA:a=0:d=1536m:fb=256`],
-			[`../${target.name}.7z`, `*.ttc`]
-		);
+		await rm(target.full);
+		await SevenZipCompress(`${OUT}/ttc`, target, `*.ttc`);
 	}
 );
 const TTFArchive = file.make(
@@ -67,38 +69,59 @@ const TTFArchive = file.make(
 	async (t, target) => {
 		const [config] = await t.need(Config, de`${OUT}/ttf`);
 		await t.need(TtfFontFiles);
-		await rm(target.full);
 
 		// StyleOrder is interlaced with "upright" and "italic"
 		// Compressing in this order reduces archive size
+		await rm(target.full);
 		for (let j = 0; j < config.styleOrder.length; j += 2) {
 			const styleUpright = config.styleOrder[j];
 			const styleItalic = config.styleOrder[j + 1];
-			await cd(`${OUT}/ttf`).run(
-				[`7z`, `a`],
-				[`-t7z`, `-mmt=on`, `-m0=LZMA:a=0:d=1536m:fb=256`],
-				[
-					`../${target.name}.7z`,
-					styleUpright ? `*-${styleUpright}.ttf` : null,
-					styleItalic ? `*-${styleItalic}.ttf` : null
-				]
+			await SevenZipCompress(
+				`${OUT}/ttf`,
+				target,
+				styleUpright ? `*-${styleUpright}.ttf` : null,
+				styleItalic ? `*-${styleItalic}.ttf` : null
 			);
 		}
 	}
 );
 
+function SevenZipCompress(dir, target, ...inputs) {
+	return cd(dir).run(
+		[SEVEN_ZIP, `a`],
+		[`-t7z`, `-mmt=on`, `-m0=LZMA:a=0:d=256m:fb=256`],
+		[`../${target.name}.7z`, ...inputs]
+	);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // TTF Building
 const ShsOtd = file.make(
 	(region, style) => `${BUILD}/shs/${region}-${style}.otd`,
-	async (t, { full, dir }, region, style) => {
+	async (t, output, region, style) => {
 		const [config] = await t.need(Config);
 		const shsSourceMap = config.shsSourceMap;
 		const [, $1] = await t.need(
-			de(dir),
+			de(output.dir),
 			fu`sources/shs/${shsSourceMap.region[region]}-${shsSourceMap.style[style]}.otf`
 		);
-		await run(OTFCCDUMP, `-o`, full, $1.full);
+		const temp = `${output.dir}/${output.name}.tmp.ttf`;
+		await run(OTF2TTF, [`-o`, temp], $1.full);
+		await run(OTFCCDUMP, `-o`, output.full, temp);
+	}
+);
+
+const NonKanji = file.make(
+	(region, style) => `${BUILD}/non-kanji0/${region}-${style}.ttf`,
+	async (t, { full, dir, name }, region, style) => {
+		await t.need(Config, Scripts);
+		const [$1] = await t.need(ShsOtd(region, style), de(dir));
+		const tmpOTD = `${dir}/${name}.otd`;
+		await RunFontBuildTask("make/non-kanji/build.js", {
+			main: $1.full,
+			o: tmpOTD
+		});
+		await OtfccBuildAsIs(tmpOTD, full);
 	}
 );
 
@@ -106,7 +129,7 @@ const WS0 = file.make(
 	(family, region, style) => `${BUILD}/ws0/${family}-${region}-${style}.ttf`,
 	async (t, { full, dir, name }, family, region, style) => {
 		const [config] = await t.need(Config, Scripts);
-		const [, $1] = await t.need(de(dir), ShsOtd(region, style));
+		const [, $1] = await t.need(de(dir), NonKanji(region, style));
 		const tmpOTD = `${dir}/${name}.otd`;
 		await RunFontBuildTask("make/punct/ws.js", {
 			main: $1.full,
@@ -124,7 +147,7 @@ const AS0 = file.make(
 	(family, region, style) => `${BUILD}/as0/${family}-${region}-${style}.ttf`,
 	async (t, { full, dir, name }, family, region, style) => {
 		const [config] = await t.need(Config, Scripts);
-		const [, $1] = await t.need(de(dir), ShsOtd(region, style));
+		const [, $1] = await t.need(de(dir), NonKanji(region, style));
 		const tmpOTD = `${dir}/${name}.otd`;
 		await RunFontBuildTask("make/punct/as.js", {
 			main: $1.full,
@@ -137,6 +160,10 @@ const AS0 = file.make(
 		await OtfccBuildAsIs(tmpOTD, full);
 	}
 );
+
+task("as-mono-sc-regular", async $ => {
+	await $.need(AS0("mono", "sc", "regular"));
+});
 
 const Pass1 = file.make(
 	(family, region, style) => `${BUILD}/pass1/${family}-${region}-${style}.ttf`,
@@ -216,12 +243,7 @@ const Prod = file.make(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // HINTING
-const Chlorophytum = [
-	NODEJS,
-	`--experimental-worker`,
-	`--max-old-space-size=8192`,
-	`./node_modules/@chlorophytum/cli/lib/index.js`
-];
+
 const HintDirPrefix = `${BUILD}/hf`;
 const HintDirOutPrefix = `${BUILD}/hfo`;
 
@@ -381,8 +403,12 @@ const TTCFile = file.make(
 		}
 
 		const [$$] = await t.need(requirements.map(t => t.from));
-		const ttcize = "node_modules/.bin/otfcc-ttcize" + (os.platform() === "win32" ? ".cmd" : "");
-		await run(ttcize, ["-o", full], [...$$.map(t => t.full)], ["-x"]);
+		await run(
+			TTCIZE,
+			["-x", "--common-width", 1000, "--common-height", 1000],
+			["-o", full],
+			[...$$.map(t => t.full)]
+		);
 	}
 );
 
