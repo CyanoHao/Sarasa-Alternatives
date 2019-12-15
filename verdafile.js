@@ -16,6 +16,7 @@ module.exports = build;
 
 // Directories
 const PREFIX = `sarasa`;
+const TTCPREFIX = `sarasa-cc`;
 const BUILD = `build`;
 const OUT = `out`;
 
@@ -56,7 +57,7 @@ const Version = oracle("version", async t => {
 });
 
 const TTCArchive = file.make(
-	version => `${OUT}/sarasa-gothic-ttc-${version}.7z`,
+	version => `${OUT}/${TTCPREFIX}-ttc-${version}.7z`,
 	async (t, target) => {
 		await t.need(TtcFontFiles);
 		await rm(target.full);
@@ -64,7 +65,7 @@ const TTCArchive = file.make(
 	}
 );
 const TTFArchive = file.make(
-	version => `${OUT}/sarasa-gothic-ttf-${version}.7z`,
+	version => `${OUT}/${TTCPREFIX}-ttf-${version}.7z`,
 	async (t, target) => {
 		const [config] = await t.need(Config, de`${OUT}/ttf`);
 		await t.need(TtfFontFiles);
@@ -384,7 +385,7 @@ function* InstrParams(otds) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // TTC building
 const TTCFile = file.make(
-	style => `${OUT}/ttc/${PREFIX}-${style}.ttc`,
+	style => `${OUT}/ttc/${TTCPREFIX}-${style}.ttc`,
 	async (t, { full, dir }, style) => {
 		const [config] = await t.need(Config, de`${OUT}/ttc`);
 
@@ -394,8 +395,8 @@ const TTCFile = file.make(
 			for (let region of config.subfamilyOrder) {
 				requirements.push({
 					from: Prod(family, region, style),
-					otd: `${OUT}/ttc/${PREFIX}-${style}-parts.${n}.otd`,
-					ttf: `${OUT}/ttc/${PREFIX}-${style}-parts.${n}.ttf`
+					otd: `${OUT}/ttc/${TTCPREFIX}-${style}-parts.${n}.otd`,
+					ttf: `${OUT}/ttc/${TTCPREFIX}-${style}-parts.${n}.ttf`
 				});
 				n++;
 			}
