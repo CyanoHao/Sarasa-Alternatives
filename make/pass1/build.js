@@ -1,13 +1,6 @@
 "use strict";
 
-const {
-	rebase,
-	introduce,
-	setEncodings,
-	build,
-	gc,
-	merge: { above: mergeAbove, below: mergeBelow }
-} = require("megaminx");
+const { rebase, introduce, build, gc, merge } = require("megaminx");
 
 const italize = require("../common/italize");
 const { nameFont, setHintFlag } = require("./metadata.js");
@@ -48,35 +41,40 @@ async function pass(ctx, config, argv) {
 	if (argv.italize) italize(b, 10);
 
 	// merge and build
-	await ctx.run(mergeBelow, "a", "a", "c", { mergeOTL: true });
-	await ctx.run(mergeAbove, "a", "a", "b", { mergeOTL: true });
+	await ctx.run(merge.below, "a", "a", "c", { mergeOTL: true });
+	await ctx.run(merge.above, "a", "a", "b", { mergeOTL: true });
 
-	await ctx.run(nameFont, "a", {
-		en_US: {
-			copyright: globalConfig.version,
-			version: packageConfig.version,
-			family: globalConfig.families[argv.family].naming.en_US + " " + argv.subfamily,
-			style: globalConfig.styles[argv.style].name
-		},
-		zh_CN: {
-			family: globalConfig.families[argv.family].naming.zh_CN + " " + argv.subfamily,
-			style: globalConfig.styles[argv.style].name
-		},
-		zh_TW: {
-			family: globalConfig.families[argv.family].naming.zh_TW + " " + argv.subfamily,
-			style: globalConfig.styles[argv.style].name
-		},
-		zh_HK: {
-			family: globalConfig.families[argv.family].naming.zh_HK + " " + argv.subfamily,
-			style: globalConfig.styles[argv.style].name
-		},
-		ja_JP: {
-			family: globalConfig.families[argv.family].naming.ja_JP + " " + argv.subfamily,
-			style: globalConfig.styles[argv.style].name
-		}
-	});
-	await ctx.run(setEncodings, "a", ENCODINGS[argv.subfamily]);
 	await ctx.run(setHintFlag, "a");
+	await ctx.run(
+		nameFont,
+		"a",
+		globalConfig.nameTupleSelector[argv.subfamily],
+		ENCODINGS[argv.subfamily],
+		{
+			en_US: {
+				copyright: globalConfig.version,
+				version: `Version ${packageConfig.version}`,
+				family: globalConfig.families[argv.family].naming.en_US + " " + argv.subfamily,
+				style: globalConfig.styles[argv.style].name
+			},
+			zh_CN: {
+				family: globalConfig.families[argv.family].naming.zh_CN + " " + argv.subfamily,
+				style: globalConfig.styles[argv.style].name
+			},
+			zh_TW: {
+				family: globalConfig.families[argv.family].naming.zh_TW + " " + argv.subfamily,
+				style: globalConfig.styles[argv.style].name
+			},
+			zh_HK: {
+				family: globalConfig.families[argv.family].naming.zh_HK + " " + argv.subfamily,
+				style: globalConfig.styles[argv.style].name
+			},
+			ja_JP: {
+				family: globalConfig.families[argv.family].naming.ja_JP + " " + argv.subfamily,
+				style: globalConfig.styles[argv.style].name
+			}
+		}
+	);
 
 	await ctx.run(gc, "a");
 	await ctx.run(build, "a", { to: config.o, optimize: true });

@@ -1,35 +1,33 @@
 {
-	"prefix": "sarasa",
-	"CVT_PADDING": 300,
-
-	"familyOrder": ["fullwidth", "fullwidthslab"],
+	"familyOrder": [ "cc", "slabcc" ],
 	"families": {
-		"fullwidth": {
+		"cc": {
 			"isMono": true,
-			"isType": true,
+			"isTerm": true,
 			"latinGroup": "iosevka-cc",
 			"naming": {
-				"en_US": "Sarasa Mono Fullwidth",
-				"zh_CN": "全角等宽更纱黑体",
-				"zh_TW": "全形等寬更紗黑體",
-				"zh_HK": "全形等寬更紗黑體",
-				"ja_JP": "更紗全角等幅ゴシック"
+				"en_US": "Sarasa CC",
+				"zh_CN": "更纱黑体 全角",
+				"zh_TW": "更紗黑體 全形",
+				"zh_HK": "更紗黑體 全形",
+				"ja_JP": "更紗ゴシック 全角",
+				"ko_KR": "사라사 고딕 전각"
 			}
 		},
-		"fullwidthslab": {
+		"slabcc": {
 			"isMono": true,
-			"isType": true,
+			"isTerm": true,
 			"latinGroup": "iosevka-cc-slab",
 			"naming": {
-				"en_US": "Sarasa Mono Fullwidth Slab",
-				"zh_CN": "全角等宽更纱黑体 Slab",
-				"zh_TW": "全形等寬更紗黑體 Slab",
-				"zh_HK": "全形等寬更紗黑體 Slab",
-				"ja_JP": "更紗全角等幅ゴシック Slab"
+				"en_US": "Sarasa Slab CC",
+				"zh_CN": "更纱衬线黑体 全角",
+				"zh_TW": "更紗襯線黑體 全形",
+				"zh_HK": "更紗襯線黑體 全形",
+				"ja_JP": "更紗スラブゴシック 全角",
+				"ko_KR": "사라사 슬랩고딕 전각"
 			}
 		}
 	},
-
 	"styleOrder": [
 		"extralight",
 		"extralightitalic",
@@ -37,8 +35,8 @@
 		"lightitalic",
 		"regular",
 		"italic",
-		"medium",
-		"mediumitalic",
+		"semibold",
+		"semibolditalic",
 		"bold",
 		"bolditalic"
 	],
@@ -58,10 +56,10 @@
 			"name": "Italic",
 			"uprightStyleMap": "regular"
 		},
-		"medium": { "name": "Medium" },
-		"mediumitalic": {
-			"name": "Medium Italic",
-			"uprightStyleMap": "medium"
+		"semibold": { "name": "Semibold" },
+		"semibolditalic": {
+			"name": "Semibold Italic",
+			"uprightStyleMap": "semibold"
 		},
 		"bold": { "name": "Bold" },
 		"bolditalic": {
@@ -70,22 +68,48 @@
 		}
 	},
 
-	"subfamilyOrder": ["cl", "sc", "tc", "hc", "j"],
+	"subfamilyOrder": ["cl", "sc", "tc", "hc", "j", "k"],
 	"subfamilies": {
 		"cl": { "name": "CL" },
 		"sc": { "name": "SC" },
 		"tc": { "name": "TC" },
 		"hc": { "name": "HC" },
-		"j": { "name": "J" }
+		"j": { "name": "J" },
+		"k": { "name": "K" }
 	},
-
 	"os2encodings": {
 		"J": { "gbk": false, "big5": false, "jis": true, "korean": false },
 		"SC": { "gbk": true, "big5": false, "jis": false, "korean": false },
 		"TC": { "gbk": false, "big5": true, "jis": false, "korean": false },
 		"HC": { "gbk": false, "big5": true, "jis": false, "korean": false },
-		"CL": { "gbk": false, "big5": true, "jis": false, "korean": false }
+		"CL": { "gbk": false, "big5": true, "jis": false, "korean": false },
+		"K": { "gbk": false, "big5": false, "jis": false, "korean": true }
 	},
+	"nameTupleSelector": {
+		"J": ["en_US", "ja_JP"],
+		"K": ["en_US", "ko_KR"],
+		"SC": ["en_US", "zh_CN"],
+		"TC": ["en_US", "zh_TW"],
+		"HC": ["en_US", "zh_HK"],
+		"CL": ["en_US", "zh_TW"]
+	},
+	"copyright": "Copyright 2015-2019, Renzhi Li (a.k.a. Belleve Invis, belleve@typeof.net). Portions Copyright © 2014, 2015 Adobe Systems Incorporated (http://www.adobe.com/), with Reserved Font Name 'Source'. Portions Copyright 2012 Google Inc.",
 
-	"copyright": "Copyright 2015-2018, Belleve Invis (belleve@typeof.net). Portions Copyright © 2014, 2015 Adobe Systems Incorporated (http://www.adobe.com/), with Reserved Font Name 'Source'. Portions Copyright 2012 Google Inc."
+	"shsSourceMap": {
+		"region": {
+			"j": "SourceHanSans",
+			"k": "SourceHanSansK",
+			"cl": "SourceHanSansK",
+			"sc": "SourceHanSansSC",
+			"tc": "SourceHanSansTC",
+			"hc": "SourceHanSansHC"
+		},
+		"style": {
+			"extralight": "ExtraLight",
+			"light": "Light",
+			"regular": "Regular",
+			"semibold": "Medium",
+			"bold": "Bold"
+		}
+	}
 }

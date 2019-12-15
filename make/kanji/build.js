@@ -1,7 +1,7 @@
 "use strict";
 
-const { quadify, introduce, build, gc } = require("megaminx");
-const { isKanji } = require("caryll-iddb");
+const { introduce, build, gc } = require("megaminx");
+const { isIdeograph, filterUnicodeRange } = require("../common/unicode-kind");
 
 async function pass(ctx, config, argv) {
 	const a = await ctx.run(introduce, "a", {
@@ -9,10 +9,7 @@ async function pass(ctx, config, argv) {
 		prefix: "a",
 		ignoreHints: true
 	});
-	for (let c in a.cmap) {
-		if (!isKanji(c - 0)) a.cmap[c] = null;
-	}
-	await ctx.run(quadify, "a");
+	filterUnicodeRange(a, isIdeograph);
 	a.cvt_ = [];
 	a.fpgm = [];
 	a.prep = [];

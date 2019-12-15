@@ -1,18 +1,5 @@
 "use strict";
 
-exports.isWestern = c => c < 0x2000;
-exports.isKorean = c =>
-	(c >= 0xac00 && c <= 0xd7af) ||
-	(c >= 0x3130 && c <= 0x318f) ||
-	(c >= 0x3200 && c <= 0x321e) ||
-	(c >= 0xffa1 && c <= 0xffdc) ||
-	(c >= 0x3260 && c <= 0x327f) ||
-	(c >= 0xa960 && c <= 0xd7ff);
-
-exports.isWS = function(c, isType = false, isTerm = false) {
-	return c >= (isTerm ? 0x2000 : 0x20a0) && c < 0x3000 && !(c >= 0x2e3a && c <= 0x2e3b);
-};
-
 function deleteGPOS(font, gid) {
 	if (!font.GPOS) return;
 	for (let l in font.GPOS.lookups) {
@@ -60,6 +47,8 @@ sanitizers.halfRight = function(glyph, gid) {
 
 function HalfCompN(n, forceFullWidth, forceHalfWidth) {
 	return function(glyph, gid, isType = false) {
+		const g1 = this.find.glyph$(this.find.gname.subst("fwid", gid));
+		Object.assign(glyph, g1);
 		const targetW = Math.min(
 			this.em * n,
 			Math.ceil(glyph.advanceWidth / this.em) *
@@ -80,13 +69,18 @@ sanitizers.halfComp2 = HalfCompN(2);
 sanitizers.halfComp3 = HalfCompN(3);
 
 const sanitizerTypes = {
-	"\u2010": "halfComp",  // HYPHEN
-	"\u2011": "halfComp",  // NON-BREAKING HYPHEN
-	"\u2012": "halfComp",  // FIGURE DASH
-	"\u2013": "halfComp", // EN DASH
-	"—": "halfComp",      // EM DASH
-	"\u2e3a": "halfComp2", // TWO-EM DASH
-	"\u2e3b": "halfComp3", // THREE-EM DASH
+	"“": "halfRight",
+	"‘": "halfRight",
+	"’": "halfLeft",
+	"”": "halfLeft",
+	"\u2010": "halfCompH",
+	"\u2011": "halfCompH",
+	"\u2012": "halfCompH",
+	"\u2013": "halfCompH",
+	"\u2014": "halfComp",
+	"\u2015": "halfComp",
+	"\u2e3a": "halfComp2",
+	"\u2e3b": "halfComp3"
 };
 
 exports.sanitizeSymbols = async function sanitizeSymbols(isType) {
@@ -104,37 +98,127 @@ exports.sanitizeSymbols = async function sanitizeSymbols(isType) {
 	}
 };
 
-exports.removeUnusedFeatures = function(a, mono) {
-	for (let f in a.GSUB.features) {
-		if (
-			f.slice(0, 4) === "pwid" ||
-			f.slice(0, 4) === "hwid" ||
-			f.slice(0, 4) === "fwid" ||
-			f.slice(0, 4) === "twid" ||
-			f.slice(0, 4) === "qwid"
-		) {
-			for (let l of a.GSUB.features[f]) {
-				a.GSUB.lookups[l] = null;
-			}
-			a.GSUB.features[f] = null;
-		}
+exports.buildNexusDash = async function() {
+	let gidCovered = new Set();
+	for (const u of [0x2013, 0x2014, 0x2015]) {
+		const gn = this.find.gname.unicode(u);
+		if (gn) gidCovered.add(gn);
 	}
-	if (mono && a.GPOS) {
-		for (let f in a.GPOS.features) {
-			if (
-				f.slice(0, 4) === "kern" ||
-				f.slice(0, 4) === "vkrn" ||
-				f.slice(0, 4) === "palt" ||
-				f.slice(0, 4) === "vpal"
-			) {
-				for (let l of a.GPOS.features[f]) {
-					a.GPOS.lookups[l] = null;
-				}
-				a.GPOS.features[f] = null;
-			}
+
+	const nexusLookupName = "ccmp__nexusDash";
+	let nexusLookupSubst = {};
+	const nexusLookup = { type: "gsub_single", subtables: [nexusLookupSubst] };
+	const nexusChainingLookupName = "ccmp__nexusDash_chaining";
+	let nexusChainingRules = [];
+	const nexusChainingLookup = { type: "gsub_chaining", subtables: nexusChainingRules };
+
+	for (const originalGid of gidCovered) {
+		const glyph = createNexusGlyph(this.find.glyph$(originalGid));
+		const nexusGid = originalGid + ".nexus";
+		await this.save.to(nexusGid, null, glyph);
+		nexusLookupSubst[originalGid] = nexusGid;
+		nexusChainingRules.push({
+			match: [[originalGid, nexusGid], [originalGid]],
+			apply: [{ lookup: nexusLookupName, at: 1 }],
+			inputBegins: 1,
+			inputEnds: 2
+		});
+	}
+
+	if (this.font.GSUB) {
+		this.font.GSUB.lookups[nexusLookupName] = nexusLookup;
+		this.font.GSUB.lookups[nexusChainingLookupName] = nexusChainingLookup;
+
+		for (const fid in this.font.GSUB.features) {
+			if (fid.slice(0, 4) !== "ccmp") continue;
+			const feature = this.font.GSUB.features[fid];
+			if (!feature) continue;
+			feature.push(nexusChainingLookupName);
 		}
 	}
 };
+
+function createNexusGlyph(glyph) {
+	let xMax = -0xffff,
+		xMin = 0xffff;
+	if (glyph.contours) {
+		for (let c of glyph.contours) {
+			for (let z of c) {
+				if (z.x > xMax) xMax = z.x;
+				if (z.x < xMin) xMin = z.x;
+			}
+		}
+	}
+	const rsb = glyph.advanceWidth - xMax;
+	const negMin = rsb * 1.5;
+	const scaling = (xMax + rsb * 1.5) / (xMax - xMin);
+	if (glyph.contours) {
+		for (let c of glyph.contours) {
+			for (let z of c) {
+				z.x = (z.x - xMin) * scaling - negMin;
+			}
+		}
+	}
+	return glyph;
+}
+
+function removeUnusedFeature(table, tag) {
+	if (!table) return;
+	for (let f in table.features) {
+		if (f.slice(0, 4) === tag) {
+			table.features[f] = null;
+		}
+	}
+}
+
+exports.removeUnusedFeatures = function(a, mono) {
+	removeUnusedFeature(a.GSUB, "pwid");
+	removeUnusedFeature(a.GSUB, "fwid");
+	removeUnusedFeature(a.GSUB, "hwid");
+	removeUnusedFeature(a.GSUB, "twid");
+	removeUnusedFeature(a.GSUB, "qwid");
+
+	if (mono) {
+		removeUnusedFeature(a.GSUB, "aalt");
+		removeUnusedFeature(a.GSUB, "locl");
+		removeUnusedFeature(a.GPOS, "kern");
+		removeUnusedFeature(a.GPOS, "vkrn");
+		removeUnusedFeature(a.GPOS, "palt");
+		removeUnusedFeature(a.GPOS, "vpal");
+	}
+};
+
+exports.removeDashCcmp = function(a, mono) {
+	if (!a.GSUB || !a.GSUB.features || !a.GSUB.lookups) return;
+
+	let affectedLookups = new Set();
+	for (const fid in a.GSUB.features) {
+		if (fid.slice(0, 4) === "ccmp") {
+			const feature = a.GSUB.features[fid];
+			if (!feature) continue;
+			for (const lid of feature) affectedLookups.add(lid);
+		}
+	}
+
+	for (const lid of affectedLookups) {
+		const lookup = a.GSUB.lookups[lid];
+		removeDashCcmpLookup(lookup, a.cmap);
+	}
+};
+function removeDashCcmpLookup(lookup, cmap) {
+	if (!lookup || lookup.type !== "gsub_ligature") return;
+	for (const st of lookup.subtables) {
+		let st1 = [];
+		for (const subst of st.substitutions) {
+			let valid = true;
+			for (const gid of subst.from) {
+				if (cmap[0x2014] === gid || cmap[0x2015] === gid) valid = false;
+			}
+			if (valid) st1.push(subst);
+		}
+		st.substitutions = st1;
+	}
+}
 
 exports.toPWID = async function() {
 	const font = this.font;
