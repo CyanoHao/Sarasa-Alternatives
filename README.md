@@ -1,6 +1,12 @@
-# Sarasa Slab
+# Sarasa Slab: Archived
 
-Mono-slab variants for [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
+Slab variants has been added to [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic).
+
+Use [latest Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic/releases) instead.
+
+* `Sarasa Mono Type Slab` → `Sarasa Mono Slab`
+* `Sarasa Mono Slab` → `Sarasa Term Slab`
+* `Sarasa Term Slab` → `Sarasa Fixed Slab`
 
 ## To build
 
